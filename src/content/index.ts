@@ -173,7 +173,11 @@ async function createFloatingBtn(x: number, y: number, parsed: ParsedCurrency) {
 
   floatingBtn = document.createElement("button");
   floatingBtn.className = "ec-btn";
-  floatingBtn.innerHTML = `<img src="${ICON_URL}" alt=""> ${target.toUpperCase()}`;
+  const img = document.createElement("img");
+  img.src = ICON_URL;
+  img.alt = "";
+  floatingBtn.appendChild(img);
+  floatingBtn.appendChild(document.createTextNode(` ${target.toUpperCase()}`));
   floatingBtn.style.left = `${x}px`;
   floatingBtn.style.top = `${y}px`;
 
@@ -197,13 +201,17 @@ async function showPopup(x: number, y: number, parsed: ParsedCurrency) {
   popup.style.left = `${x}px`;
   popup.style.top = `${y}px`;
 
-  popup.innerHTML = `
-    <div class="ec-label">${parsed.code.toUpperCase()} → ${target.toUpperCase()}</div>
-    <div class="ec-value">Loading...</div>
-  `;
-  shadow.appendChild(popup);
+  const label = document.createElement("div");
+  label.className = "ec-label";
+  label.textContent = `${parsed.code.toUpperCase()} \u2192 ${target.toUpperCase()}`;
 
-  const valueEl = popup.querySelector(".ec-value")!;
+  const valueEl = document.createElement("div");
+  valueEl.className = "ec-value";
+  valueEl.textContent = "Loading...";
+
+  popup.appendChild(label);
+  popup.appendChild(valueEl);
+  shadow.appendChild(popup);
 
   try {
     const rate = await fetchRate(parsed.code, target);
