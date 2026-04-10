@@ -51,7 +51,8 @@ const SYMBOL_TO_CODE: Record<string, string> = {
   "€": "eur", "£": "gbp", "¥": "jpy", "₹": "inr", "₩": "krw",
   "₽": "rub", "₺": "try", "₿": "btc", "R$": "brl", "kr": "sek",
   "zł": "pln", "₫": "vnd", "฿": "thb", "₴": "uah", "₦": "ngn",
-  "RM": "myr", "₱": "php", "₸": "kzt", "лв": "bgn", "Kč": "czk",
+  "RM": "myr", "₱": "php", "₸": "kzt", "лв": "bgn", "Kč": "czk", 
+  "CA$": "cad", "$": "usd"
 };
 
 const ISO_CODES = new Set([
