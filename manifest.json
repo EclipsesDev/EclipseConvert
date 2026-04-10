@@ -1,6 +1,6 @@
 {
     "manifest_version": 3,
-    "name": "EclipseConvert",
+    "name": "Eclipse Convert",
     "description": "Highlight any currency amount on a webpage to convert currency.",
     "version": "1.0.1",
     "browser_specific_settings": {
