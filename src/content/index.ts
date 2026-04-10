@@ -1,3 +1,5 @@
+export {};
+
 const host = document.createElement("eclipse-convert");
 host.style.cssText = "position:absolute;top:0;left:0;z-index:2147483647;pointer-events:none;";
 document.body.appendChild(host);
@@ -110,12 +112,6 @@ function parseCurrency(text: string): ParsedCurrency | null {
   return null;
 }
 
-const API_PRIMARY = "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies";
-const API_FALLBACK = "https://latest.currency-api.pages.dev/v1/currencies";
-
-const rateCache = new Map<string, { rate: number; ts: number }>();
-const CACHE_TTL = 60 * 60 * 1000;
-
 function getTargetCurrency(): Promise<string> {
   return new Promise((resolve) => {
     chrome.storage.sync.get("targetCurrency", (result) => {
@@ -124,32 +120,18 @@ function getTargetCurrency(): Promise<string> {
   });
 }
 
-async function fetchRate(fromCode: string, toCode: string): Promise<number> {
-  if (fromCode === toCode) return 1;
-
-  const cacheKey = `${fromCode}_${toCode}`;
-  const cached = rateCache.get(cacheKey);
-  if (cached && Date.now() - cached.ts < CACHE_TTL) return cached.rate;
-
-  const endpoint = `/${fromCode}.min.json`;
-  let data: Record<string, Record<string, number>> | null = null;
-
-  try {
-    const res = await fetch(API_PRIMARY + endpoint);
-    if (res.ok) data = await res.json() as typeof data;
-  } catch { /* fall through to fallback */ }
-
-  if (!data) {
-    const res = await fetch(API_FALLBACK + endpoint);
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
-    data = await res.json() as typeof data;
-  }
-
-  const rate = data?.[fromCode]?.[toCode];
-  if (typeof rate !== "number") throw new Error(`No ${toCode.toUpperCase()} rate for ${fromCode.toUpperCase()}`);
-
-  rateCache.set(cacheKey, { rate, ts: Date.now() });
-  return rate;
+function fetchRate(fromCode: string, toCode: string): Promise<number> {
+  return new Promise((resolve, reject) => {
+    chrome.runtime.sendMessage({ type: "fetchRate", from: fromCode, to: toCode }, (res) => {
+      if (chrome.runtime.lastError) {
+        reject(new Error(chrome.runtime.lastError.message));
+      } else if (res?.error) {
+        reject(new Error(res.error));
+      } else {
+        resolve(res.rate);
+      }
+    });
+  });
 }
 
 let floatingBtn: HTMLButtonElement | null = null;

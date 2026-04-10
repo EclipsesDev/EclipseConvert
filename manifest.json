@@ -2,7 +2,7 @@
     "manifest_version": 3,
     "name": "Eclipse Convert - Fast Currency Converter",
     "description": "Highlight any currency amount on a webpage to convert currency.",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "browser_specific_settings": {
         "gecko": {
             "id": "eclipseconvert@extension",
@@ -20,6 +20,10 @@
     "action": {
         "default_popup": "popup/popup.html",
         "default_icon": "icons/icon-48.png"
+    },
+    "background": {
+        "service_worker": "background/index.js",
+        "scripts": ["background/index.js"]
     },
     "permissions": ["storage"],
     "host_permissions": [
